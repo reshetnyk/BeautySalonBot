@@ -1,27 +1,27 @@
-'use strict'
+'use strict';
 
-const Telegram = require('telegram-node-bot')
-const TelegramBaseController = Telegram.TelegramBaseController
-const TextCommand = Telegram.TextCommand
-const tg = new Telegram.Telegram('435065298:AAEK7nnZGVAniVls70mp-Aq2LebUuVKjgC8')
+const Telegram = require('telegram-node-bot');
+const TelegramBaseController = Telegram.TelegramBaseController;
+const TextCommand = Telegram.TextCommand;
+const tg = new Telegram.Telegram('435065298:AAEK7nnZGVAniVls70mp-Aq2LebUuVKjgC8');
 
 class PingController extends TelegramBaseController {
-    /**
+	/**
      * @param {Scope} $
      */
-    pingHandler($) {
-        $.sendMessage('pong')
-    }
+	pingHandler($) {
+		$.sendMessage('pong');
+	}
 
-    get routes() {
-        return {
-            'pingCommand': 'pingHandler'
-        }
-    }
+	get routes() {
+		return {
+			'pingCommand': 'pingHandler'
+		};
+	}
 }
 
 tg.router
-    .when(
-        new TextCommand('ping', 'pingCommand'),
-        new PingController()
-    )
+	.when(
+		new TextCommand('ping', 'pingCommand'),
+		new PingController()
+	);
