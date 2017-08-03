@@ -21,7 +21,7 @@ class PingController extends TelegramBaseController {
 }
 
 tg.router
-	.when(11
+	.when(
 		new TextCommand('ping', 'pingCommand'),
 		new PingController()
 	);
