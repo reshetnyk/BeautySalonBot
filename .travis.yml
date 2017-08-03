@@ -7,3 +7,4 @@ node_js:
   - "4"
 install: 
   - 'npm install --save telegram-node-bot'
+  - 'npm install -g eslint'
