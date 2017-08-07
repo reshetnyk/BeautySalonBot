@@ -6,8 +6,8 @@
   install --save telegram-node-bot
 
 Для встановлення sequelize:
-  npm install --save sequelize
-  npm install --save mysql2
+  - npm install --save sequelize
+  - npm install --save mysql2
   
   
 
