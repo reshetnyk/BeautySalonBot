@@ -1,9 +1,9 @@
 В проекті використовуються такі модулі:
-  - telegram-node-bot.
+  - telegram-node-bot;
   - sequelize.
   
 Для встановлення telegram-node-bot:
-  install --save telegram-node-bot
+  - install --save telegram-node-bot
 
 Для встановлення sequelize:
   - npm install --save sequelize
