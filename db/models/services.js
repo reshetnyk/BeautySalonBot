@@ -11,19 +11,4 @@ const Service = sequelize.define('service', {
 
 sequelize.sync();
 
-function Services(){
-
-}
-
-Services.prototype.getAllServices = function(){
-  Service.findAll().then(services => {
-    services.forEach(function(e) {
-      console.log('id:' + e.id + ',\nname:' + e.name + ',\nprice:' + e.price + ',\nduration' + e.duration + ',\ninterval:' + e.interval);  
-    }, this);
-      
-  })
-}
-
-module.exports = Services;
-
-//node ./dbqueries/services.js
+module.exports = Service;
