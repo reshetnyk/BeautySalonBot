@@ -11,4 +11,5 @@ const Service = sequelize.define('service', {
 
 sequelize.sync();
 
+
 module.exports = Service;

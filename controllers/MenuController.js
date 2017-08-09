@@ -4,7 +4,6 @@ const Telegram = require('telegram-node-bot');
 const TelegramBaseController = Telegram.TelegramBaseController;
 const Service = require('../db/models/services.js');
 
-
 class MenuController extends TelegramBaseController {
 	/**
      * @param {Scope} $
@@ -64,11 +63,9 @@ class MenuController extends TelegramBaseController {
 }
 
 async function getServicesMenuElems($){
-    
     var allServices = await Service.findAll();
     var menuElems = [];
-    
-    
+  
     allServices.forEach(function(item, i, allServices) {
         menuElems.push({
             text: item.name,
@@ -84,8 +81,5 @@ async function getServicesMenuElems($){
 function writeDate(chatId, messageId){
     $.api.editMessageText('Ваш запис скасовано.', { chatId, messageId });
 }
-
-
-
 
 module.exports = MenuController;
