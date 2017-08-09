@@ -2,13 +2,15 @@
 
 const Telegram = require('telegram-node-bot');
 const TelegramBaseController = Telegram.TelegramBaseController;
+const Service = require('../db/models/services.js');
 
 class MenuController extends TelegramBaseController {
 	/**
      * @param {Scope} $
      */
-	menuHandler($) {
-        
+	async menuHandler($) {
+        var servicesMenuItems = await getServicesMenuElems($);
+
         $.runInlineMenu({
             layout: 1, //some layouting here
             oneTimeKeyboard: true,
@@ -19,39 +21,8 @@ class MenuController extends TelegramBaseController {
                     text: 'Записатися', //text of the button
                     message: 'Оберіть послугу: ',
                     layout: 1,
-                    menu: [
-                    {
-                        text: 'Перукарські послуги',
-                        callback: (callbackQuery, message) => {
-                             $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
-                        }
-                    },
-                    {
-                        text: 'Візаж',
-                        callback: (callbackQuery, message) => {
-                            $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
-                        }
-                    },
-                    {
-                        text: 'Манікюр/Педикюр',
-                        callback: (callbackQuery, message) => {
-                            $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
-                        }
-                    },
-                    {
-                        text: 'Массаж/Spa',
-                        callback: (callbackQuery, message) => {
-                            $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
-                        }
-                    },
-                    {
-                        text: 'Косметологічні послуги',
-                        callback: (callbackQuery, message) => {
-                            $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
-                        }
-                    }
-                ]
-            }, 
+                    menu: servicesMenuItems
+                }, 
                 {
                     text: 'Сказувати запис', //text of the button
                     
@@ -89,6 +60,22 @@ class MenuController extends TelegramBaseController {
 			'menuCommand': 'menuHandler'
 		};
 	}
+}
+
+async function getServicesMenuElems($){
+    var allServices = await Service.findAll();
+    var menuElems = [];
+  
+    allServices.forEach(function(item, i, allServices) {
+        menuElems.push({
+            text: item.name,
+            callback: (callbackQuery, message) => {
+                $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
+            }
+        });
+    });
+    
+    return menuElems;
 }
 
 function writeDate(chatId, messageId){
