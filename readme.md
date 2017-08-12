@@ -3,7 +3,7 @@
   - sequelize.
   
 Для встановлення telegram-node-bot:
-  - install --save telegram-node-bot
+  - npm install --save telegram-node-bot
 
 Для встановлення sequelize:
   - npm install --save sequelize
