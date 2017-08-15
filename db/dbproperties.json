@@ -1,8 +1,8 @@
 {
-    "host" : "sql11.freesqldatabase.com",
-    "dialect" : "mysql",
-    "database" : "sql11188726",
-    "username" : "sql11188726",
-    "password" : "WMtaMH1XRA",
-    "port" : "3306"
+    "host": "sql8.freesqldatabase.com",
+    "dialect": "mysql",
+    "database": "sql8189771",
+    "username": "sql8189771",
+    "password": "UkSjkWzdZc",
+    "port": "3306"
 }

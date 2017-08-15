@@ -3,12 +3,14 @@
 const Telegram = require('telegram-node-bot');
 const TelegramBaseController = Telegram.TelegramBaseController;
 const Service = require('../db/models/services.js');
+const Order = require('../db/models/orders.js');
+const sequelize = require('sequelize');
 
 class MenuController extends TelegramBaseController {
 	/**
      * @param {Scope} $
      */
-	async menuHandler($) {
+    async menuHandler($) {
         var servicesMenuItems = await getServicesMenuElems($);
 
         $.runInlineMenu({
@@ -22,10 +24,10 @@ class MenuController extends TelegramBaseController {
                     message: 'Оберіть послугу: ',
                     layout: 1,
                     menu: servicesMenuItems
-                }, 
+                },
                 {
                     text: 'Сказувати запис', //text of the button
-                    
+
                     message: 'Ви підтверджуєте скасування?',
                     layout: 2,
                     menu: [ //Sub menu (current message will be edited)
@@ -38,7 +40,7 @@ class MenuController extends TelegramBaseController {
                         {
                             text: 'Ні',
                             callback: (callbackQuery, message) => {
-                               // $.routeTo("/start");
+                                // $.routeTo("/start");
                             }
                         }
                     ]
@@ -55,30 +57,95 @@ class MenuController extends TelegramBaseController {
         })
     }
 
-    	get routes() {
-		return {
-			'menuCommand': 'menuHandler'
-		};
-	}
+    get routes() {
+        return {
+            'menuCommand': 'menuHandler'
+        };
+    }
 }
 
-async function getServicesMenuElems($){
+async function getServicesMenuElems($) {
     var allServices = await Service.findAll();
     var menuElems = [];
-  
-    allServices.forEach(function(item, i, allServices) {
+
+    //await getTimetable(new Date(), 1);
+
+    allServices.forEach(function (item, i, allServices) {
         menuElems.push({
             text: item.name,
             callback: (callbackQuery, message) => {
                 $.api.editMessageText('Введіть дату у форматі: число.місяць', { chat_id: $.chatId, message_id: message.messageId });
+
             }
         });
     });
-    
+
     return menuElems;
 }
 
-function writeDate(chatId, messageId){
+async function getTimetable(day, serviceId) {
+    var timetable = [];
+
+    var workStart = 8;
+    var workEnd = 19;
+
+    //if service didn't find 
+    var service = await Service.findById(serviceId);
+
+    var time = new Date(day);
+    var marginalTime = new Date(day);
+
+    time.setUTCHours(workStart, 0, 0, 0);
+    marginalTime.setUTCHours(workEnd, 0, 0, 0);
+
+    while (time < marginalTime) {
+        timetable.push({
+            time: new Date(time),
+            isFree: true
+        });
+
+        time.setTime(time.getTime() + ((service.duration + service.interval) * 60 * 1000));
+    }
+
+    var orders = await Order.findAll({
+        where: {
+            $and: [
+                sequelize.where(sequelize.fn('YEAR', sequelize.col('date_time')), day.getUTCFullYear()),
+                sequelize.where(sequelize.fn('MONTH', sequelize.col('date_time')), day.getUTCMonth() + 1),
+                sequelize.where(sequelize.fn('DAY', sequelize.col('date_time')), day.getUTCDate()),
+                { serviceId: serviceId }
+            ]
+        }
+    });
+
+    if (orders.length > 0) {
+        orders.forEach(function (o, i, orders) {
+            timetable.forEach(function (t, j, timetable) {
+                if (o.datetime.getUTCHours() === t.time.getUTCHours() &&
+                    o.datetime.getUTCMinutes() === t.time.getUTCMinutes()) {
+                    t.isFree = false;
+                }
+            });
+        });
+    }
+
+    /*
+    console.log('*****TIMETABLE****');
+    timetable.forEach(function (t, j, timetable) {
+        console.log('***|' + t.time.getUTCHours() + ':' + t.time.getUTCMinutes() + '| isFree=' + t.isFree);
+    });
+    */
+
+    return timetable;
+}
+
+async function orderService(serviceId, clientId, date) {
+    await Order.create({ serviceId: serviceId, clientId: clientId, datetime: date });
+}
+
+
+
+function writeDate(chatId, messageId) {
     $.api.editMessageText('Ваш запис скасовано.', { chatId, messageId });
 }
 
